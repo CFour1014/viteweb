@@ -1,2 +1,20 @@
-// Import all of Bootstrap's CSS
-@import "bootstrap/scss/bootstrap";
+// src/scss/styles.scss
+
+// 1. (可選) 在這裡客製化 Bootstrap 的變數 (例如主要顏色)
+// $primary: #004d9c; // 藍色主題
+// $secondary: #e31837; // 紅色強調色
+
+// 2. 匯入所有 Bootstrap 的樣式
+@import "~bootstrap/scss/bootstrap";
+
+// 3. 客製化樣式
+body {
+    padding-top: 56px; /* 為固定導航欄預留空間 */
+    background-color: #f8f9fa;
+}
+
+.hero-section {
+    background-image: linear-gradient(rgba(255,255,255,0.8), rgba(255,255,255,0.8)), url('https://via.placeholder.com/1500x500?text=Baseball+Stadium+Background'); 
+    background-size: cover;
+    background-position: center;
+}
