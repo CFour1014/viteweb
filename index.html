@@ -3,178 +3,292 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>棒球殿堂 | 全方位守備紀錄</title>
+    <title>棒球殿堂 | 熱血全功能完整版</title>
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 
     <style>
         :root {
-            --pitcher-color: #d9534f; /* 投捕-紅 */
-            --infield-color: #198754; /* 內野-綠 */
-            --outfield-color: #0dcaf0; /* 外野-藍 */
+            --primary-gold: #ffc107;
+            --baseball-red: #d9534f;
+            --infield-green: #198754;
+            --outfield-blue: #0dcaf0;
+            --dark-bg: #121212;
         }
 
-        body { background-color: #1a1a1a; color: #fff; overflow-x: hidden; }
+        body { 
+            background-color: var(--dark-bg); 
+            color: #ffffff; 
+            font-family: "Microsoft JhengHei", sans-serif; 
+            overflow-x: hidden; 
+        }
 
-        /* 卡片基礎樣式與 3D 效果 */
+        /* --- 英雄區：視差背景與打字機 --- */
+        #intro {
+            height: 100vh;
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)),
+            url('https://loremflickr.com/1920/1080/baseball,stadium/all');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .typewriter h1 {
+            overflow: hidden;
+            border-right: .15em solid var(--primary-gold);
+            white-space: nowrap;
+            margin: 0 auto;
+            letter-spacing: .15em;
+            animation: typing 3.5s steps(30, end), blink-caret .5s step-end infinite;
+        }
+        @keyframes typing { from { width: 0 } to { width: 100% } }
+        @keyframes blink-caret { from, to { border-color: transparent } 50% { border-color: var(--primary-gold) } }
+
+        /* --- 卡片：3D 懸停特效 --- */
         .position-card {
+            background: #1e1e1e;
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
             transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             cursor: pointer;
-            background: #2d2d2d;
-            border: none;
-            overflow: hidden;
+            height: 100%;
         }
-
         .position-card:hover {
-            transform: translateY(-15px) rotateX(10deg);
-            box-shadow: 0 15px 35px rgba(255, 255, 255, 0.1);
+            transform: translateY(-15px) rotateY(10deg);
+            box-shadow: 0 15px 30px rgba(255, 193, 7, 0.2);
         }
-
         .card-img-top {
-            height: 200px;
+            height: 220px;
             object-fit: cover;
             transition: transform 0.6s;
         }
-
         .position-card:hover .card-img-top {
-            transform: scale(1.15);
+            transform: scale(1.1);
         }
 
-        /* 標題裝飾 */
-        .section-title {
-            position: relative;
-            display: inline-block;
-            padding-bottom: 10px;
+        /* --- 表格：互動效果 --- */
+        .player-avatar {
+            width: 50px; height: 50px;
+            object-fit: cover; border-radius: 50%;
+            border: 2px solid var(--primary-gold);
+            margin-right: 15px;
+            transition: transform 0.3s;
         }
-        .section-title::after {
-            content: '';
-            position: absolute;
-            width: 50%;
-            height: 4px;
-            background: var(--pitcher-color);
-            bottom: 0;
-            left: 25%;
-            border-radius: 2px;
+        .table-row-hover:hover {
+            background-color: rgba(255, 255, 255, 0.05) !important;
+        }
+        .table-row-hover:hover .player-avatar {
+            transform: rotate(15deg) scale(1.2);
+        }
+
+        /* --- 按鈕：流光效果 --- */
+        .btn-glow {
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 15px rgba(255, 193, 7, 0.4);
+            transition: 0.3s;
+        }
+        .btn-glow:hover {
+            box-shadow: 0 0 25px rgba(255, 193, 7, 0.8);
+            transform: scale(1.05);
         }
     </style>
 </head>
 <body>
 
-    <nav class="navbar navbar-dark bg-dark shadow fixed-top">
-        <div class="container justify-content-center">
-            <span class="navbar-brand fw-bold animate__animated animate__pulse animate__infinite">⚾ 棒球守備圖譜大全</span>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow-lg">
+        <div class="container">
+            <a class="navbar-brand fw-bold animate__animated animate__pulse animate__infinite" href="#">
+                <span class="fs-3 me-2">⚾</span> 棒球殿堂
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link active" href="#intro">首頁</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#positions">守備位置</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#stats-table">球員數據</a></li>
+                </ul>
+            </div>
         </div>
     </nav>
 
-    <div class="container py-5 mt-5">
-        <div class="text-center mb-5 mt-4">
-            <h2 class="display-5 fw-bold section-title" data-aos="zoom-in">九大防禦位置</h2>
-            <p class="text-muted mt-3">每個號碼代表一個職責，每個人都是贏球的關鍵。</p>
+    <header id="intro">
+        <div class="container">
+            <div class="typewriter">
+                <h1 class="display-2 fw-bolder text-white">九局的熱血與汗水</h1>
+            </div>
+            <p class="lead mt-3 fs-4 animate__animated animate__fadeInUp animate__delay-1s text-light">
+                每一球都是夢想，每一次揮棒都是勇氣。
+            </p>
+            <div class="mt-5 animate__animated animate__zoomIn animate__delay-2s">
+                <button class="btn btn-warning btn-lg px-5 fw-bold btn-glow">立即進入賽場</button>
+            </div>
+        </div>
+    </header>
+
+    <section id="positions" class="container py-5">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <h2 class="display-5 fw-bold">🛡️ 各司其職：九大守備位置</h2>
+            <hr class="mx-auto bg-warning" style="width: 100px; height: 3px;">
         </div>
 
-        <h4 class="text-danger mb-4 fw-bold" data-aos="fade-right border-start border-danger border-4 ps-3">投捕核心 Battery</h4>
-        <div class="row g-4 mb-5">
-            <div class="col-lg-6 col-md-6" data-aos="flip-left">
-                <div class="card h-100 position-card">
+        <div class="row g-4 mb-4">
+            <div class="col-md-6" data-aos="flip-left">
+                <div class="card position-card">
                     <img src="https://loremflickr.com/800/500/baseball,pitcher/all?lock=1" class="card-img-top">
                     <div class="card-body">
-                        <h5 class="card-title text-danger">1. P (投手)</h5>
-                        <p class="card-text text-light opacity-75">守備的起點，負責投出各種球種壓制打者。</p>
+                        <h5 class="fw-bold text-danger">P (1) | 投手</h5>
+                        <p class="text-secondary">比賽核心，用球速與球種主宰全場。</p>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-6 col-md-6" data-aos="flip-right" data-aos-delay="200">
-                <div class="card h-100 position-card">
+            <div class="col-md-6" data-aos="flip-right">
+                <div class="card position-card">
                     <img src="https://loremflickr.com/800/500/baseball,catcher/all?lock=2" class="card-img-top">
                     <div class="card-body">
-                        <h5 class="card-title text-danger">2. C (捕手)</h5>
-                        <p class="card-text text-light opacity-75">本壘守護神，負責引導投手與全場配球。</p>
+                        <h5 class="fw-bold text-danger">C (2) | 捕手</h5>
+                        <p class="text-secondary">本壘守護神，場上的大腦與戰略指揮官。</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <h4 class="text-success mb-4 fw-bold" data-aos="fade-right">內野防線 Infield</h4>
-        <div class="row g-4 mb-5 text-dark">
+        <div class="row g-4 mb-4">
             <div class="col-lg-3 col-md-6" data-aos="zoom-in" data-aos-delay="100">
-                <div class="card h-100 position-card text-white">
-                    <img src="https://loremflickr.com/800/500/baseball,1b/all?lock=3" class="card-img-top">
+                <div class="card position-card">
+                    <img src="https://loremflickr.com/800/500/baseball,fielding/all?lock=3" class="card-img-top">
                     <div class="card-body">
-                        <h5 class="text-success">3. 1B (一壘手)</h5>
-                        <p class="small opacity-75">接球頻率最高，需處理大量的傳球刺殺。</p>
+                        <h5 class="fw-bold text-success">1B (3) | 一壘手</h5>
+                        <p class="small text-secondary">守備終點站，接捕各種傳球刺殺。</p>
                     </div>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6" data-aos="zoom-in" data-aos-delay="200">
-                <div class="card h-100 position-card text-white">
-                    <img src="https://loremflickr.com/800/500/baseball,2b/all?lock=4" class="card-img-top">
+                <div class="card position-card">
+                    <img src="https://loremflickr.com/800/500/baseball,fielding/all?lock=4" class="card-img-top">
                     <div class="card-body">
-                        <h5 class="text-success">4. 2B (二壘手)</h5>
-                        <p class="small opacity-75">守備範圍廣，需具備優秀的橫移與轉傳能力。</p>
+                        <h5 class="fw-bold text-success">2B (4) | 二壘手</h5>
+                        <p class="small text-secondary">具備極佳橫移速度與雙殺配合力。</p>
                     </div>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6" data-aos="zoom-in" data-aos-delay="300">
-                <div class="card h-100 position-card text-white">
-                    <img src="https://loremflickr.com/800/500/baseball,3b/all?lock=5" class="card-img-top">
+                <div class="card position-card">
+                    <img src="https://loremflickr.com/800/500/baseball,fielding/all?lock=5" class="card-img-top">
                     <div class="card-body">
-                        <h5 class="text-success">5. 3B (三壘手)</h5>
-                        <p class="small opacity-75">熱角 (Hot Corner)，面對極快球速的強烈反應力。</p>
+                        <h5 class="fw-bold text-success">3B (5) | 三壘手</h5>
+                        <p class="small text-secondary">「熱角」防區，需應對極快強襲球。</p>
                     </div>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6" data-aos="zoom-in" data-aos-delay="400">
-                <div class="card h-100 position-card text-white">
-                    <img src="https://loremflickr.com/800/500/baseball,shortstop/all?lock=6" class="card-img-top">
+                <div class="card position-card">
+                    <img src="https://loremflickr.com/800/500/baseball,fielding/all?lock=6" class="card-img-top">
                     <div class="card-body">
-                        <h5 class="text-success">6. SS (游擊手)</h5>
-                        <p class="small opacity-75">球隊防守靈魂，具備最強的傳球臂力與機動力。</p>
+                        <h5 class="fw-bold text-success">SS (6) | 游擊手</h5>
+                        <p class="small text-secondary">內野防守核心，需最強的傳球與判斷。</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <h4 class="text-info mb-4 fw-bold" data-aos="fade-right">外野森林 Outfield</h4>
         <div class="row g-4">
             <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
-                <div class="card h-100 position-card text-white">
-                    <img src="https://loremflickr.com/800/500/baseball,lf/all?lock=7" class="card-img-top">
+                <div class="card position-card">
+                    <img src="https://loremflickr.com/800/500/baseball,outfield/all?lock=7" class="card-img-top">
                     <div class="card-body">
-                        <h5 class="text-info">7. LF (左外野)</h5>
-                        <p class="small opacity-75">負責左方防區，常面對大量強勁的拉打飛球。</p>
+                        <h5 class="fw-bold text-info">LF (7) | 左外野手</h5>
+                        <p class="small text-secondary">負責左方空域，攔截強勁拉打球。</p>
                     </div>
                 </div>
             </div>
             <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
-                <div class="card h-100 position-card text-white">
-                    <img src="https://loremflickr.com/800/500/baseball,cf/all?lock=8" class="card-img-top">
+                <div class="card position-card">
+                    <img src="https://loremflickr.com/800/500/baseball,outfield/all?lock=8" class="card-img-top">
                     <div class="card-body">
-                        <h5 class="text-info">8. CF (中外野)</h5>
-                        <p class="small opacity-75">外野指揮官，覆蓋範圍最廣，速度最快。</p>
+                        <h5 class="fw-bold text-info">CF (8) | 中外野手</h5>
+                        <p class="small text-secondary">外野指揮官，覆蓋範圍全場最大。</p>
                     </div>
                 </div>
             </div>
             <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
-                <div class="card h-100 position-card text-white">
-                    <img src="https://loremflickr.com/800/500/baseball,rf/all?lock=9" class="card-img-top">
+                <div class="card position-card">
+                    <img src="https://loremflickr.com/800/500/baseball,outfield/all?lock=9" class="card-img-top">
                     <div class="card-body">
-                        <h5 class="text-info">9. RF (右外野)</h5>
-                        <p class="small opacity-75">需具備強大雷射肩，防止跑者進佔三壘。</p>
+                        <h5 class="fw-bold text-info">RF (9) | 右外野手</h5>
+                        <p class="small text-secondary">需具備長傳三壘與本壘的「雷射肩」。</p>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <footer class="text-center py-5 mt-5 border-top border-secondary">
-        <p class="text-muted">© 2025 棒球殿堂 | 動畫模組啟動</p>
+    <section id="stats-table" class="bg-light py-5 text-dark">
+        <div class="container">
+            <h2 class="text-center mb-5 fw-bold" data-aos="fade-right">📈 傳奇數據看板</h2>
+            <div class="table-responsive shadow-lg rounded overflow-hidden" data-aos="fade-up">
+                <table class="table table-hover align-middle mb-0 bg-white">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>球員</th>
+                            <th>打擊率 (BA)</th>
+                            <th>全壘打 (HR)</th>
+                            <th>打點 (RBI)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="table-row-hover">
+                            <td>
+                                <img src="https://loremflickr.com/100/100/man?lock=11" class="player-avatar">
+                                <span class="fw-bold">陳金鋒</span>
+                            </td>
+                            <td class="text-danger fw-bold">0.315</td>
+                            <td>15</td>
+                            <td>48</td>
+                        </tr>
+                        <tr class="table-row-hover">
+                            <td>
+                                <img src="https://loremflickr.com/100/100/man?lock=12" class="player-avatar">
+                                <span class="fw-bold">林智勝</span>
+                            </td>
+                            <td class="text-info fw-bold">0.288</td>
+                            <td>12</td>
+                            <td>35</td>
+                        </tr>
+                        <tr class="table-row-hover">
+                            <td>
+                                <img src="https://loremflickr.com/100/100/man?lock=13" class="player-avatar">
+                                <span class="fw-bold">王建民</span>
+                            </td>
+                            <td colspan="3" class="text-center text-muted fst-italic">投手專區數據 (ERA: 2.80, Win: 5)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-dark text-white py-4 text-center">
+        <div class="container">
+            <p class="mb-0 opacity-50">&copy; 2025 棒球世界專案 | 技術支援：Vite, Bootstrap & AOS</p>
+        </div>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
+        // 初始化滾動動畫
         AOS.init({
-            duration: 800,
+            duration: 1000,
             once: false,
             mirror: true
         });
